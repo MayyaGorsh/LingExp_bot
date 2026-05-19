@@ -1,0 +1,7 @@
+audio_filename;opt1;opt2;repeats
+work1.wav;*work;walk;3
+work2.wav;*work;walk;3
+work3.wav;*work;walk;3
+walk1.wav;work;*walk;3
+walk2.wav;work;*walk;3
+walk3.wav;work;*walk;3

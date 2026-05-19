@@ -1,0 +1,31 @@
+# секреты
+.env
+.env.*
+
+# python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+venv/
+env/
+
+# логи и временные файлы
+*.log
+*.session
+*.tmp
+~$*
+
+# системные
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# все скрытые файлы и папки (конфиги IDE, кэши и прочее)
+.*
+!.gitignore
+!.gitattributes
+!.github/
+!.github/**

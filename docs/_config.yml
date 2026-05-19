@@ -1,0 +1,19 @@
+title: Бот для лингвистических экспериментов
+description: >-
+  Документация. ВКР, НИУ ВШЭ, ОП «Фундаментальная и
+  компьютерная лингвистика», 2026.
+
+theme: jekyll-theme-cayman
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  toc_levels: 2..3
+  syntax_highlighter: rouge
+
+permalink: pretty
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor

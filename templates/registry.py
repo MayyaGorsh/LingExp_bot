@@ -1,0 +1,111 @@
+"""
+реестр шаблонов экспериментов.
+каждый шаблон описывает:
+- required_columns: обязательные колонки CSV
+- csv_mapping: маппинг колонок CSV -> полей trial
+- build_phases: функция, формирующая фазы из загруженных проб
+- export_columns: колонки, которые добавляются в CSV-экспорт (с исходными именами)
+- phases_info: список названий фаз (для шаблонов с >1 фазой, чтобы запрашивать CSV по фазам)
+"""
+
+import os
+
+_TEMPLATES: dict = {}
+
+# директория с примерами CSV - по одному файлу <code>.csv на шаблон
+_EXAMPLES_DIR = os.path.join(os.path.dirname(__file__), "examples")
+
+
+def register(code: str, info: dict):
+    """зарегистрировать шаблон"""
+    _TEMPLATES[code] = info
+
+
+def get_template(code: str) -> dict | None:
+    return _TEMPLATES.get(code)
+
+
+def get_example_csv_path(code: str, phase: int = 1) -> str | None:
+    """путь к csv-примеру заполнения для конкретной фазы шаблона.
+
+    конвенция имён в examples/:
+    - <code>.csv - фаза 1 (или единственная фаза);
+    - <code>_phase<N>.csv - фаза N≥2, если её формат отличается от первой.
+
+    если файла под фазу N нет - возвращаем фазу 1 (значит, формат CSV
+    в этой фазе совпадает с первой). если и его нет - None.
+    """
+    if phase >= 2:
+        path = os.path.join(_EXAMPLES_DIR, f"{code}_phase{phase}.csv")
+        if os.path.isfile(path):
+            return path
+    path = os.path.join(_EXAMPLES_DIR, f"{code}.csv")
+    return path if os.path.isfile(path) else None
+
+
+def get_example_csv_paths(code: str, phase: int = 1) -> list[str]:
+    """все csv-примеры для шаблона/фазы.
+
+    помимо «обычного» <code>.csv шаблон может зарегистрировать
+    дополнительные файлы через поле `extra_examples` (для тех шаблонов,
+    где разные настройки требуют разных примеров - напр. Acceptability
+    Judgment с одиночной vs совместной подачей). порядок списка
+    стабильный: основной пример первым, потом дополнительные.
+    """
+    paths: list[str] = []
+    main = get_example_csv_path(code, phase)
+    if main:
+        paths.append(main)
+    info = _TEMPLATES.get(code) or {}
+    extras = info.get("extra_examples") or []
+    if phase >= 2:
+        extras = info.get(f"extra_examples_phase{phase}") or extras
+    for name in extras:
+        path = os.path.join(_EXAMPLES_DIR, name)
+        if os.path.isfile(path) and path not in paths:
+            paths.append(path)
+    return paths
+
+
+def get_example_caption(code: str, phase: int = 1) -> str | None:
+    """пользовательский комментарий, который шлётся вместе с примером CSV.
+
+    шаблон может задать его глобально (`example_caption`) или попробно
+    (`example_caption_phase1`, `example_caption_phase2`, …). per-phase
+    приоритетнее: используем его, если задан; иначе fallback на общий.
+    если ничего не задано - caller использует дефолтный текст.
+    """
+    info = _TEMPLATES.get(code) or {}
+    per_phase = info.get(f"example_caption_phase{phase}")
+    if isinstance(per_phase, str) and per_phase.strip():
+        return per_phase
+    cap = info.get("example_caption")
+    return cap if isinstance(cap, str) and cap.strip() else None
+
+
+def get_likert_config(config: dict, defaults: dict, key: str = "main") -> dict:
+    """вернуть настройки Likert-шкалы (scale + labels) с учётом пользовательских override'ов"""
+    defaults = dict(defaults or {})
+    overrides = (config or {}).get("custom_likert", {}) or {}
+    o = overrides.get(key)
+    if not isinstance(o, dict):
+        return defaults
+    scale = o.get("scale") if isinstance(o.get("scale"), int) else defaults.get("scale", 5)
+    # labels: словарь {"1": "...", "N": "..."}
+    labels = dict(defaults.get("labels") or {})
+    override_labels = o.get("labels") or {}
+    if isinstance(override_labels, dict):
+        for k, v in override_labels.items():
+            if isinstance(v, str) and v.strip():
+                labels[str(k)] = v.strip()
+    return {"scale": scale, "labels": labels}
+
+
+# ── импорт всех шаблонов, чтобы они зарегистрировались ──
+
+from templates import (
+    word_level,
+    sentence_level,
+    auditory,
+    visual,
+)

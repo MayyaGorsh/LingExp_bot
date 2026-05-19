@@ -1,0 +1,6 @@
+stimulus;pair_id;img_1_filename;img_2_filename;correct_img
+На картинке птица.;птица_01;robin_photo.jpg;iguana_photo.jpg;robin_photo.jpg
+На картинке ящерица.;ящерица_02;iguana_photo.jpg;macaw_photo.jpg;iguana_photo.jpg
+На картинке морское животное.;море_03;whale_photo.jpg;deer_photo.jpg;whale_photo.jpg
+На картинке олень.;олень_04;stag_photo.jpg;meerkat_photo.jpg;stag_photo.jpg
+На картинке рыба.;рыба_05;clownfish_photo.jpg;prairiedog_photo.jpg;clownfish_photo.jpg

@@ -1,0 +1,6 @@
+stimulus;pair_id;img_1_filename;img_2_filename;img_3_filename;correct_img
+Покажи оленя.;олень_01;deer_photo.jpg;whale_photo.jpg;covered.png;deer_photo.jpg
+Покажи птицу.;птица_02;whale_photo.jpg;clownfish_photo.jpg;covered.png;covered.png
+Покажи рептилию.;рептилия_03;iguana_photo.jpg;clownfish_photo.jpg;covered.png;iguana_photo.jpg
+Покажи мелкое млекопитающее.;мелкое_04;deer_photo.jpg;clownfish_photo.jpg;covered.png;covered.png
+Покажи рыбу.;рыба_05;clownfish_photo.jpg;whale_photo.jpg;covered.png;clownfish_photo.jpg

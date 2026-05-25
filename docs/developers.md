@@ -29,7 +29,7 @@ title: Руководство для разработчика
 1. Установить Python ≥ 3.11.
 2. `python -m venv venv && venv\Scripts\activate` (Windows) или
    `source venv/bin/activate` (Linux/Mac).
-3. `pip install -r bot_claude/requirements.txt`.
+3. `pip install -r requirements.txt`.
 4. Положить в корень `.env`:
 
    ```
@@ -40,9 +40,44 @@ title: Руководство для разработчика
 
 5. Запустить локальный MongoDB или указать строку подключения к
    Atlas.
-6. `python -m bot_claude.main`.
+6. `python main.py`.
 
 Логи пишутся в `bot.log` (DEBUG) и в консоль (INFO).
+
+## Запуск в Docker
+
+В корне репозитория лежит `Dockerfile` на базе `python:3.12-slim` с
+установленным `ffmpeg` (нужен `pydub` для измерения длительности
+аудио и добавления тишины в стимулы).
+
+1. Подготовить `.env` рядом с `Dockerfile` (значения те же, что
+   для локального запуска).
+2. Собрать образ:
+
+   ```
+   docker build -t lingexp-bot .
+   ```
+
+3. Запустить контейнер:
+
+   ```
+   docker run --env-file .env --name lingexp-bot lingexp-bot
+   ```
+
+Образ изолирован от хоста: если `MONGO_URI=mongodb://localhost:27017`,
+внутри контейнера `localhost` указывает на сам контейнер, а не на
+хостовую машину. Варианты:
+
+- использовать MongoDB Atlas - указать полный `mongodb+srv://...`
+  в `.env`;
+- использовать MongoDB на хосте - в `MONGO_URI` подставить
+  `host.docker.internal` (Docker Desktop, Windows / macOS) или
+  запустить контейнер с `--network=host` (Linux);
+- поднять Mongo рядом в отдельном контейнере и связать через
+  пользовательскую docker-сеть.
+
+Логи внутри контейнера пишутся в `/app/bot.log` и в stdout, читать
+их можно через `docker logs lingexp-bot`.
 
 ## Структура репозитория
 

@@ -1,0 +1,14 @@
+.git
+.gitignore
+.idea
+.claude
+.venv
+venv
+__pycache__
+**/__pycache__
+*.pyc
+*.pyo
+bot.log
+.env
+docs/_layouts
+docs/_config.yml
